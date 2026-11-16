@@ -76,31 +76,103 @@ recuperarSenha.addEventListener("click", function () {
     );
 });
 
-formulario.addEventListener("submit", function (event) {
+// ===============================================================
+// ATUALIZAÇÃO 16/11 — LOGIN E CADASTRO DIDÁTICOS
+// JSON é usado ao abrir por HTTP/HTTPS. Quando o aluno abre index.html
+// diretamente (file://), os dados de exemplo vêm do arquivo .js auxiliar.
+// Senhas são fictícias. Não usar para pessoas/relatos reais.
+// ===============================================================
+const CHAVE_CADASTROS_DEMO = "vozativa_cadastros_ficticios_v1";
+
+function lerCadastrosDemo() {
+    try {
+        const dados = JSON.parse(localStorage.getItem(CHAVE_CADASTROS_DEMO) || "[]");
+        return Array.isArray(dados) ? dados : [];
+    } catch (erro) {
+        return [];
+    }
+}
+
+async function carregarUsuariosDemo() {
+    if (location.protocol === "file:") {
+        return window.VOZATIVA_USUARIOS_EXEMPLO || [];
+    }
+    try {
+        const resposta = await fetch("dados/usuarios.json", { cache: "no-store" });
+        if (!resposta.ok) throw new Error("Falha ao carregar usuarios.json");
+        const dados = await resposta.json();
+        return Array.isArray(dados) ? dados : [];
+    } catch (erro) {
+        console.warn("ATUALIZAÇÃO 16/11: JSON indisponível.", erro);
+        throw new Error("Não foi possível ler o JSON de usuários fictícios.");
+    }
+}
+
+// SHA-256 aqui serve apenas à atividade local; não é autenticação segura.
+// Um login verdadeiro exige servidor, armazenamento e hash de senhas adequado.
+async function resumoSenhaDemo(senha) {
+    if (!window.crypto || !crypto.subtle) {
+        throw new Error("Este navegador não permite o cadastro local de demonstração.");
+    }
+    const bytes = new TextEncoder().encode(senha);
+    const resumo = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(resumo))
+        .map(parte => parte.toString(16).padStart(2, "0")).join("");
+}
+
+formulario.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const nome = campoNome.value.trim();
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const senha = campoSenha.value;
 
     if (modoCadastro && !nome) {
         mostrarMensagem("Digite seu nome completo.");
         return;
     }
-
     if (senha.length < 6) {
         mostrarMensagem("A senha deve ter pelo menos 6 caracteres.");
         return;
     }
 
-    if (modoCadastro) {
-        mostrarMensagem(
-            "Formulário validado! Falta conectar o cadastro ao servidor."
-        );
-        return;
-    }
+    botaoEnviar.disabled = true;
+    try {
+        const exemplos = await carregarUsuariosDemo();
+        const cadastrados = lerCadastrosDemo();
 
-    mostrarMensagem(
-        "Formulário validado! Falta conectar o login ao servidor."
-    );
+        if (modoCadastro) {
+            if (exemplos.some(u => u.email.toLowerCase() === email) ||
+                cadastrados.some(u => u.email === email)) {
+                mostrarMensagem("Este e-mail já está cadastrado.");
+                return;
+            }
+            const senhaHash = await resumoSenhaDemo(senha);
+            cadastrados.push({ id: "demo-" + Date.now(), nome, email, senhaHash });
+            localStorage.setItem(CHAVE_CADASTROS_DEMO, JSON.stringify(cadastrados));
+            mostrarMensagem("Cadastro de teste criado! Clique em Já tenho uma conta para entrar.");
+            return;
+        }
+
+        const usuarioLocal = cadastrados.find(u => u.email === email);
+        let usuario = null;
+        if (usuarioLocal && usuarioLocal.senhaHash === await resumoSenhaDemo(senha)) {
+            usuario = usuarioLocal;
+        } else if (!usuarioLocal) {
+            usuario = exemplos.find(u => u.email.toLowerCase() === email && u.senha === senha);
+        }
+        if (!usuario) {
+            mostrarMensagem("E-mail ou senha incorretos.");
+            return;
+        }
+        // Guarda somente o primeiro nome fictício para esta demonstração.
+        sessionStorage.setItem("vozativa_demo_nome", usuario.nome);
+        mostrarMensagem("Bem-vindo(a), " + usuario.nome + "! Redirecionando...");
+        setTimeout(() => { window.location.href = "index.html"; }, 550);
+    } catch (erro) {
+        mostrarMensagem(erro.message || "Erro ao verificar os dados de teste.");
+        console.error("ATUALIZAÇÃO 16/11 — erro no login:", erro);
+    } finally {
+        botaoEnviar.disabled = false;
+    }
 });
