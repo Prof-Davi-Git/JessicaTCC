@@ -241,3 +241,8 @@ body[data-theme="dark"][data-page="entrar"] .campo input {
         align-items: flex-start;
     }
 }
+
+/* ATUALIZAÇÃO 16/11 - respeita o atributo hidden nos campos do cadastro. */
+body[data-page="entrar"] [hidden] {
+    display: none !important;
+}
