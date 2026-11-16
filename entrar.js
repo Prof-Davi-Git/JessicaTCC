@@ -20,6 +20,8 @@ function mostrarMensagem(texto) {
 botaoCadastro.addEventListener("click", function () {
     modoCadastro = !modoCadastro;
 
+    // ATUALIZAÇÃO 16/11 - alterna o bloco todo, não apenas o input.
+    document.getElementById("campoNomeCadastro").hidden = !modoCadastro;
     campoNome.hidden = !modoCadastro;
     campoNome.required = modoCadastro;
 
@@ -111,8 +113,14 @@ async function carregarUsuariosDemo() {
 // SHA-256 aqui serve apenas à atividade local; não é autenticação segura.
 // Um login verdadeiro exige servidor, armazenamento e hash de senhas adequado.
 async function resumoSenhaDemo(senha) {
+    // ATUALIZAÇÃO 16/11 - fallback apenas para a atividade em file://.
+    // Não é seguro para senhas reais: utilizar somente usuários fictícios.
     if (!window.crypto || !crypto.subtle) {
-        throw new Error("Este navegador não permite o cadastro local de demonstração.");
+        let codigo = 2166136261;
+        for (const caractere of String(senha)) {
+            codigo = Math.imul(codigo ^ caractere.charCodeAt(0), 16777619);
+        }
+        return "demo-" + (codigo >>> 0).toString(16);
     }
     const bytes = new TextEncoder().encode(senha);
     const resumo = await crypto.subtle.digest("SHA-256", bytes);
