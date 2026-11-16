@@ -166,6 +166,11 @@ formulario.addEventListener("submit", async function (event) {
             return;
         }
         // Guarda somente o primeiro nome fictício para esta demonstração.
+        // ATUALIZAÇÃO 16/11 — guarda os dados mínimos para exibir o perfil.
+        sessionStorage.setItem("vozativa_demo_usuario", JSON.stringify({
+            nome: usuario.nome,
+            email: usuario.email
+        }));
         sessionStorage.setItem("vozativa_demo_nome", usuario.nome);
         mostrarMensagem("Bem-vindo(a), " + usuario.nome + "! Redirecionando...");
         setTimeout(() => { window.location.href = "index.html"; }, 550);
