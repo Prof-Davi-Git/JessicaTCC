@@ -1,2 +1,35 @@
-# TCC
- 
+# VozAtiva — Projeto JessicaTCC
+
+## ATUALIZAÇÃO 16/11 — Banco de dados didático
+
+Este projeto ganhou uma demonstração de Banco de Dados **com dados totalmente fictícios**.
+
+| Arquivo | Alteração |
+| --- | --- |
+| `banco.sql` | **Novo:** comandos MySQL para criar banco `vozativa`, tabela `usuarios` e inserir cinco pessoas fictícias. |
+| `dados/usuarios.json` | **Novo:** lista dos cinco usuários fictícios com senha de demonstração. |
+| `dados/usuarios-exemplo.js` | **Novo:** cópia da lista para que o exemplo funcione quando abrir `index.html` diretamente no VSCode (`file://`). |
+| `entrar.html` | **Alterado:** corrige o título do formulário, ajusta um caminho de script e carrega os usuários de exemplo. |
+| `entrar.js` | **Alterado:** cadastro local de demonstração e verificação de e-mail/senha. |
+| `README.md` | **Alterado:** este resumo. |
+
+### Teste rápido
+
+1. Abra o `index.html` normalmente e clique em **Entrar**.
+2. Use o e-mail `ana@vozativa.example` e a senha `vozativa123`.
+3. Clique em **Entrar na conta**. O sistema mostra uma mensagem e retorna à página inicial.
+4. Para testar **Criar conta**, use apenas nome e e-mail inventados; o cadastro de demonstração fica salvo **somente no navegador utilizado**, não no arquivo JSON.
+
+### O que os alunos precisam entender
+
+- O arquivo `banco.sql` contém comandos que podem ser executados no MySQL.
+- O arquivo `dados/usuarios.json` é uma **cópia manual fictícia** dos usuários, e não uma conexão com MySQL.
+- Em `http://` ou `https://`, `entrar.js` consulta o JSON com `fetch()`.
+- Abrindo `index.html` diretamente (`file://`), o navegador pode impedir o `fetch()`. Por isso existe a cópia `dados/usuarios-exemplo.js`; nesse caso o navegador lê o JS, **não o JSON**.
+- Para incluir um usuário fictício fixo, mantenha as listas `usuarios.json` e `usuarios-exemplo.js` iguais e atualize o SQL se necessário.
+- As contas criadas pelo botão **Criar conta** só existem no navegador em que foram cadastradas.
+- Procure por `ATUALIZAÇÃO 16/11` em `entrar.html` e `entrar.js` para encontrar as mudanças.
+
+**Aviso importante:** este site fala sobre violência e pedidos de ajuda. Não utilize o cadastro demonstrativo com informações reais, denúncias, relatos, documentos ou senhas verdadeiras. Este exemplo não protege informações sensíveis, não cria uma sessão autenticada de verdade e não deve ser usado para atendimentos. Para contas reais, será necessário um serviço seguro de autenticação e armazenamento.
+
+Nenhuma outra página, CSS ou imagem foi modificada.
