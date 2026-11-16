@@ -687,3 +687,69 @@ document.addEventListener(
 
     }
 );
+
+// =========================================================
+// ATUALIZAÇÃO 16/11 — ÁREA DE PERFIL DIDÁTICA
+// Usa somente nome/e-mail da sessão de demonstração existente.
+// Não consulta nem altera banco.sql, JSON ou senhas.
+// Não é autenticação nem proteção de páginas ou dados reais.
+// =========================================================
+function obterUsuarioDemo() {
+    try {
+        const valor = sessionStorage.getItem("vozativa_demo_usuario");
+        const usuario = valor ? JSON.parse(valor) : null;
+        if (usuario && typeof usuario.nome === "string" &&
+            typeof usuario.email === "string") return usuario;
+        // Compatibilidade com o login demonstrativo anterior.
+        const nomeAntigo = sessionStorage.getItem("vozativa_demo_nome");
+        return nomeAntigo ? { nome: nomeAntigo, email: "" } : null;
+    } catch (erro) {
+        return null;
+    }
+}
+
+function sairDaContaDemo() {
+    sessionStorage.removeItem("vozativa_demo_usuario");
+    sessionStorage.removeItem("vozativa_demo_nome");
+    window.location.href = "index.html";
+}
+
+function atualizarMenuUsuarioDemo() {
+    const usuario = obterUsuarioDemo();
+    // Atualiza a barra de navegação presente em todas as páginas.
+    document.querySelectorAll(".nav-right .login-btn").forEach(function(botao) {
+        if (!usuario) return;
+        botao.textContent = "Minha conta: " + usuario.nome.split(" ")[0];
+        botao.removeAttribute("onclick");
+        botao.setAttribute("aria-label", "Abrir meu perfil de demonstração");
+        botao.onclick = function() { window.location.href = "perfil.html"; };
+    });
+
+    // O botão Sair é criado somente para quem fez login.
+    document.querySelectorAll(".nav-right").forEach(function(barra) {
+        if (!usuario || barra.querySelector("[data-vozativa-sair]")) return;
+        const sair = document.createElement("button");
+        sair.type = "button";
+        sair.dataset.vozativaSair = "";
+        sair.className = "login-btn";
+        sair.textContent = "Sair";
+        sair.style.marginLeft = "8px";
+        sair.style.backgroundColor = "transparent";
+        sair.style.border = "1px solid currentColor";
+        sair.addEventListener("click", sairDaContaDemo);
+        barra.appendChild(sair);
+    });
+
+    // Os campos só existem na nova página perfil.html.
+    const campoNome = document.getElementById("perfilNomeDemo");
+    const campoEmail = document.getElementById("perfilEmailDemo");
+    const aviso = document.getElementById("perfilAvisoDemo");
+    if (campoNome) campoNome.textContent = usuario ? usuario.nome : "Nenhum usuário conectado";
+    if (campoEmail) campoEmail.textContent = usuario && usuario.email ? usuario.email : "—";
+    if (aviso) aviso.textContent = usuario
+        ? "Você está usando uma conta de demonstração."
+        : "Entre com uma conta fictícia para ver seu perfil.";
+}
+
+// ATUALIZAÇÃO 16/11 — monta o menu no carregamento de cada página.
+document.addEventListener("DOMContentLoaded", atualizarMenuUsuarioDemo);
