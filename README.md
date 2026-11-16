@@ -42,3 +42,11 @@ Este projeto ganhou uma demonstração de Banco de Dados **com dados totalmente 
 - Após entrar, clique no seu nome no menu para abrir o perfil. Clique em **Sair** para encerrar a sessão de demonstração.
 - Os arquivos `banco.sql`, `dados/usuarios.json` e `dados/usuarios-exemplo.js` foram **preservados sem alterações**.
 - Tudo continua **exclusivamente didático**, sem sessão segura ou proteção de dados reais.
+
+## ATUALIZAÇÃO 16/11 — Correção da tela Criar conta
+
+- `entrar.html`: o campo **Nome completo** agora fica dentro de um bloco específico do cadastro.
+- `entrar.css`: o atributo `hidden` passa a ocultar corretamente os campos ao alternar entre Entrar e Criar conta.
+- `entrar.js`: o botão **Criar conta** mostra o nome e muda o botão principal para **Criar minha conta**. Incluído um fallback didático para a senha local ao abrir o HTML diretamente (`file://`).
+- As contas fictícias criadas pelo formulário ficam no `localStorage` do navegador. Depois de cadastrar, clique em **Já tenho uma conta** e entre com o mesmo e-mail e senha.
+- `banco.sql`, `dados/usuarios.json` e `dados/usuarios-exemplo.js` não foram modificados. Não utilizar senhas nem dados reais.
