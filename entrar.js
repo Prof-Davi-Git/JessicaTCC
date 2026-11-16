@@ -13,6 +13,14 @@ const lembrarLabel = document.getElementById("lembrarLabel");
 
 let modoCadastro = false;
 
+// ATUALIZAÇÃO 16/11 — aviso exibido ao retornar à tela de login após cadastro.
+const retornoCadastro = sessionStorage.getItem("vozativa_demo_cadastro_sucesso");
+if (retornoCadastro) {
+    sessionStorage.removeItem("vozativa_demo_cadastro_sucesso");
+    document.getElementById("email").value = retornoCadastro;
+    mostrarMensagem("Conta de demonstração criada! Entre com o e-mail e a senha cadastrados.");
+}
+
 function mostrarMensagem(texto) {
     mensagem.textContent = texto;
 }
@@ -158,7 +166,10 @@ formulario.addEventListener("submit", async function (event) {
             const senhaHash = await resumoSenhaDemo(senha);
             cadastrados.push({ id: "demo-" + Date.now(), nome, email, senhaHash });
             localStorage.setItem(CHAVE_CADASTROS_DEMO, JSON.stringify(cadastrados));
-            mostrarMensagem("Cadastro de teste criado! Clique em Já tenho uma conta para entrar.");
+            // ATUALIZAÇÃO 16/11 — depois de salvar, redireciona ao login.
+            // A página entrar.html abre por padrão no modo Entrar.
+            sessionStorage.setItem("vozativa_demo_cadastro_sucesso", email);
+            window.location.href = "entrar.html";
             return;
         }
 
