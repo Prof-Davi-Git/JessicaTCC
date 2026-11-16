@@ -32,4 +32,13 @@ Este projeto ganhou uma demonstração de Banco de Dados **com dados totalmente 
 
 **Aviso importante:** este site fala sobre violência e pedidos de ajuda. Não utilize o cadastro demonstrativo com informações reais, denúncias, relatos, documentos ou senhas verdadeiras. Este exemplo não protege informações sensíveis, não cria uma sessão autenticada de verdade e não deve ser usado para atendimentos. Para contas reais, será necessário um serviço seguro de autenticação e armazenamento.
 
-Nenhuma outra página, CSS ou imagem foi modificada.
+
+
+## ATUALIZAÇÃO 16/11 — Perfil e sessão demonstrativa
+
+- **Novo:** `perfil.html`, página que mostra o nome e e-mail fictícios da conta.
+- **Modificado:** `entrar.js`, agora guarda nome e e-mail após o login de demonstração.
+- **Modificado:** `js/common.js`, exibe **Minha conta** e **Sair** nos menus das páginas que já o carregam.
+- Após entrar, clique no seu nome no menu para abrir o perfil. Clique em **Sair** para encerrar a sessão de demonstração.
+- Os arquivos `banco.sql`, `dados/usuarios.json` e `dados/usuarios-exemplo.js` foram **preservados sem alterações**.
+- Tudo continua **exclusivamente didático**, sem sessão segura ou proteção de dados reais.
