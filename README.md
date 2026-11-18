@@ -50,3 +50,16 @@ Este projeto ganhou uma demonstração de Banco de Dados **com dados totalmente 
 - `entrar.js`: o botão **Criar conta** mostra o nome e muda o botão principal para **Criar minha conta**. Incluído um fallback didático para a senha local ao abrir o HTML diretamente (`file://`).
 - As contas fictícias criadas pelo formulário ficam no `localStorage` do navegador. Depois de cadastrar, clique em **Já tenho uma conta** e entre com o mesmo e-mail e senha.
 - `banco.sql`, `dados/usuarios.json` e `dados/usuarios-exemplo.js` não foram modificados. Não utilizar senhas nem dados reais.
+
+## ATUALIZAÇÃO 18/11 — Entrada inicial, cadastro automático e menu
+
+- **Primeiro acesso:** abrir `index.html` sem uma sessão demonstrativa agora leva à tela `entrar.html`. A barra superior e a navegação pública continuam disponíveis na tela de login.
+- **Navegação pública:** notícias, apoio, emergência e informações continuam acessíveis sem cadastro. A opção **Denúncias** e o botão **Enviar relato** solicitam login demonstrativo primeiro.
+- **Cadastro:** ao concluir `Criar conta`, os dados fictícios continuam no armazenamento local do navegador e a sessão é iniciada automaticamente, sem solicitar novo login. O usuário retorna à página inicial ou à página Denúncias, caso essa tenha motivado o acesso.
+- **Login normal:** mostra o nome do usuário no cabeçalho; se a pessoa entrou para enviar um relato, retorna ao destino solicitado.
+- **Sair:** encerra a sessão demonstrativa e retorna à página de login `entrar.html`, em vez de permanecer na mesma página.
+- **Cabeçalho:** os arquivos `style.css` e `css/common.css` receberam ajustes de espaçamento e responsividade, evitando a sobreposição das barras. O menu recolhe para o botão de navegação em telas menores.
+- **Arquivos modificados:** `js/common.js`, `entrar.js`, `js/denuncias.js`, `style.css`, `css/common.css` e este `README.md`.
+- **Arquivos preservados:** `banco.sql`, `dados/usuarios.json`, `dados/usuarios-exemplo.js` e a página de perfil.
+
+**Limites importantes:** todo o login é uma demonstração de front-end. Não existe autenticação no servidor e o registro de sessão não fornece proteção real; os arquivos HTML podem ser abertos diretamente. Não coloque informações reais de vítimas, denúncias ou senhas nesse protótipo. A função de enviar relatos já existia e utiliza um endereço externo; por isso, teste apenas com conteúdo inteiramente inventado. Os telefones de emergência e o acesso a informações de segurança nunca devem depender de login.
