@@ -166,10 +166,14 @@ formulario.addEventListener("submit", async function (event) {
             const senhaHash = await resumoSenhaDemo(senha);
             cadastrados.push({ id: "demo-" + Date.now(), nome, email, senhaHash });
             localStorage.setItem(CHAVE_CADASTROS_DEMO, JSON.stringify(cadastrados));
-            // ATUALIZAÇÃO 16/11 — depois de salvar, redireciona ao login.
-            // A página entrar.html abre por padrão no modo Entrar.
-            sessionStorage.setItem("vozativa_demo_cadastro_sucesso", email);
-            window.location.href = "entrar.html";
+            // ATUALIZAÇÃO 18/11 - cadastrou: já inicia a sessão fictícia.
+            sessionStorage.setItem("vozativa_demo_usuario", JSON.stringify({ nome, email }));
+            sessionStorage.setItem("vozativa_demo_nome", nome);
+            sessionStorage.removeItem("vozativa_demo_cadastro_sucesso");
+            mostrarMensagem("Conta de demonstração criada! Bem-vindo(a), " + nome + "!");
+            const destinoCadastro = sessionStorage.getItem("vozativa_after_login");
+            sessionStorage.removeItem("vozativa_after_login");
+            window.location.href = destinoCadastro === "denuncias.html" ? destinoCadastro : "index.html";
             return;
         }
 
@@ -192,7 +196,12 @@ formulario.addEventListener("submit", async function (event) {
         }));
         sessionStorage.setItem("vozativa_demo_nome", usuario.nome);
         mostrarMensagem("Bem-vindo(a), " + usuario.nome + "! Redirecionando...");
-        setTimeout(() => { window.location.href = "index.html"; }, 550);
+        // ATUALIZAÇÃO 18/11 - retorna ao formulário de denúncia se foi a ação solicitada.
+        const destinoLogin = sessionStorage.getItem("vozativa_after_login");
+        sessionStorage.removeItem("vozativa_after_login");
+        setTimeout(() => {
+            window.location.href = destinoLogin === "denuncias.html" ? destinoLogin : "index.html";
+        }, 350);
     } catch (erro) {
         mostrarMensagem(erro.message || "Erro ao verificar os dados de teste.");
         console.error("ATUALIZAÇÃO 16/11 — erro no login:", erro);
