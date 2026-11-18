@@ -1017,3 +1017,45 @@ footer {
     }
 }
 
+
+/* ATUALIZAÇÃO 18/11 - cabeçalho organizado, sem sobreposição */
+
+      /* Mantém a barra de emergência visível sem sobrepor ou cortar o menu. */
+      body { padding-top: 0 !important; }
+      .safety-bar { position: relative !important; top: auto !important; left:auto; right:auto; z-index:1001; }
+      .mainnav { position: sticky !important; top:0 !important; left:auto; right:auto; z-index:1000; }
+      .safety-inner { width:min(1520px,calc(100% - 40px)) !important; max-width:1520px !important;
+        padding:10px 14px !important; gap:14px 24px !important; }
+      .safety-msg { flex:1 1 360px; line-height:1.35; font-size:13px; }
+      .safety-actions { gap:10px; flex-wrap:wrap; }
+      .nav-inner { width:min(1520px,calc(100% - 40px)) !important; max-width:1520px !important;
+        padding:12px 14px !important; gap:18px !important; }
+      .brand { flex-shrink:0; white-space:nowrap; }
+      .nav-links { flex:1 1 auto; justify-content:center; gap:3px !important;
+        flex-wrap:nowrap !important; }
+      .nav-links > button, .nav-links .dropdown > button { font-size:14px; padding:10px 11px; }
+      .nav-right { gap:10px !important; flex-shrink:0; }
+      .nav-right .login-btn { white-space:nowrap; font-size:13px; }
+      @media (max-width:1350px) {
+        .nav-inner { position:relative; gap:12px !important; }
+        .menu-toggle { display:flex !important; order:2; }
+        .brand { order:1; margin-right:auto; }
+        .nav-right { order:3; }
+        .mainnav .nav-links { display:none !important; position:absolute; top:100%; left:12px; right:12px;
+          width:auto; z-index:2000; padding:12px; background:var(--card,#fff);
+          border:1px solid rgba(0,0,0,.1); border-radius:14px;
+          box-shadow:0 12px 32px rgba(0,0,0,.15);
+          flex-direction:column; align-items:stretch; gap:4px; max-height:70vh; overflow-y:auto; }
+        .mainnav .nav-links.menu-aberto { display:flex !important; }
+        .mainnav .nav-links > button, .mainnav .nav-links .dropdown > button {
+          width:100%; text-align:left; padding:12px 15px; }
+        .mainnav .nav-links .dropdown-menu {position:static; width:100%;box-shadow:none;}
+      }
+      @media (max-width:650px) {
+        .safety-inner,.nav-inner {width:100% !important;padding:10px 14px !important;}
+        .safety-msg { flex-basis:100%; font-size:12px; }
+        .safety-actions {width:100%;display:flex;}
+        .safety-actions button {flex:1;min-width:135px;}
+        .nav-right .login-btn { max-width:150px;overflow:hidden;text-overflow:ellipsis; }
+      }
+    
