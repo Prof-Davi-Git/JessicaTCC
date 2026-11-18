@@ -35,6 +35,13 @@
        PÁGINAS EXTERNAS
        --------------------------------------------------------- */
 
+    // ATUALIZAÇÃO 18/11 - solicitar login apenas para o formulário de denúncia.
+    // Informações públicas, emergência e canais de ajuda permanecem acessíveis.
+    if (page === "denuncias" && !obterUsuarioDemo()) {
+        solicitarLoginDemo("denuncias.html");
+        return;
+    }
+
     if (paginasExternas[page]) {
 
         fecharMenuMobile();
@@ -87,6 +94,8 @@
             "vozativa_secao",
             secaoId
         );
+        // ATUALIZAÇÃO 18/11 - permitir abrir seção pública sem sessão.
+        sessionStorage.setItem("vozativa_public_navigation_once", "1");
 
         fecharMenuMobile();
 
@@ -711,7 +720,14 @@ function obterUsuarioDemo() {
 function sairDaContaDemo() {
     sessionStorage.removeItem("vozativa_demo_usuario");
     sessionStorage.removeItem("vozativa_demo_nome");
-    window.location.href = "index.html";
+    sessionStorage.removeItem("vozativa_after_login");
+    // ATUALIZAÇÃO 18/11 - Sair volta à tela de login, sem deixar a página aberta.
+    window.location.replace("entrar.html");
+}
+
+function solicitarLoginDemo(destino) {
+    if (destino) sessionStorage.setItem("vozativa_after_login", destino);
+    window.location.href = "entrar.html";
 }
 
 function atualizarMenuUsuarioDemo() {
@@ -733,7 +749,7 @@ function atualizarMenuUsuarioDemo() {
         sair.dataset.vozativaSair = "";
         sair.className = "login-btn";
         sair.textContent = "Sair";
-        sair.style.marginLeft = "8px";
+        // ATUALIZAÇÃO 18/11 - espaçamento controlado pelo layout do cabeçalho.
         sair.style.backgroundColor = "transparent";
         sair.style.border = "1px solid currentColor";
         sair.addEventListener("click", sairDaContaDemo);
@@ -752,4 +768,65 @@ function atualizarMenuUsuarioDemo() {
 }
 
 // ATUALIZAÇÃO 16/11 — monta o menu no carregamento de cada página.
+// ATUALIZAÇÃO 18/11 - primeiro acesso: mostrar login antes do conteúdo inicial.
+// O menu e as páginas informativas continuam públicos.
+(function iniciarPeloLogin() {
+    const nomeArquivo = location.pathname.split("/").pop().toLowerCase();
+    const inicial = nomeArquivo === "index.html" || nomeArquivo === "";
+    if (!inicial || obterUsuarioDemo()) return;
+    const navegacaoPublica = sessionStorage.getItem("vozativa_public_navigation_once") === "1";
+    sessionStorage.removeItem("vozativa_public_navigation_once");
+    if (!navegacaoPublica) window.location.replace("entrar.html");
+})();
+
 document.addEventListener("DOMContentLoaded", atualizarMenuUsuarioDemo);
+
+// ATUALIZAÇÃO 18/11 - organização visual do menu e barras de segurança.
+// CSS injetado no JS comum para preservar os arquivos originais de cada página.
+(function ajustarCabecalhoVozAtiva() {
+    if (document.getElementById("vozativa-cabecalho-18-11")) return;
+    const estilo = document.createElement("style");
+    estilo.id = "vozativa-cabecalho-18-11";
+    estilo.textContent = `
+      /* Mantém a barra de emergência visível sem sobrepor ou cortar o menu. */
+      body { padding-top: 0 !important; }
+      .safety-bar { position: relative !important; top: auto !important; left:auto; right:auto; z-index:1001; }
+      .mainnav { position: sticky !important; top:0 !important; left:auto; right:auto; z-index:1000; }
+      .safety-inner { width:min(1520px,calc(100% - 40px)) !important; max-width:1520px !important;
+        padding:10px 14px !important; gap:14px 24px !important; }
+      .safety-msg { flex:1 1 360px; line-height:1.35; font-size:13px; }
+      .safety-actions { gap:10px; flex-wrap:wrap; }
+      .nav-inner { width:min(1520px,calc(100% - 40px)) !important; max-width:1520px !important;
+        padding:12px 14px !important; gap:18px !important; }
+      .brand { flex-shrink:0; white-space:nowrap; }
+      .nav-links { flex:1 1 auto; justify-content:center; gap:3px !important;
+        flex-wrap:nowrap !important; }
+      .nav-links > button, .nav-links .dropdown > button { font-size:14px; padding:10px 11px; }
+      .nav-right { gap:10px !important; flex-shrink:0; }
+      .nav-right .login-btn { white-space:nowrap; font-size:13px; }
+      @media (max-width:1350px) {
+        .nav-inner { position:relative; gap:12px !important; }
+        .menu-toggle { display:flex !important; order:2; }
+        .brand { order:1; margin-right:auto; }
+        .nav-right { order:3; }
+        .mainnav .nav-links { display:none !important; position:absolute; top:100%; left:12px; right:12px;
+          width:auto; z-index:2000; padding:12px; background:var(--card,#fff);
+          border:1px solid rgba(0,0,0,.1); border-radius:14px;
+          box-shadow:0 12px 32px rgba(0,0,0,.15);
+          flex-direction:column; align-items:stretch; gap:4px; max-height:70vh; overflow-y:auto; }
+        .mainnav .nav-links.menu-aberto { display:flex !important; }
+        .mainnav .nav-links > button, .mainnav .nav-links .dropdown > button {
+          width:100%; text-align:left; padding:12px 15px; }
+        .mainnav .nav-links .dropdown-menu {position:static; width:100%;box-shadow:none;}
+      }
+      @media (max-width:650px) {
+        .safety-inner,.nav-inner {width:100% !important;padding:10px 14px !important;}
+        .safety-msg { flex-basis:100%; font-size:12px; }
+        .safety-actions {width:100%;display:flex;}
+        .safety-actions button {flex:1;min-width:135px;}
+        .nav-right .login-btn { max-width:150px;overflow:hidden;text-overflow:ellipsis; }
+      }
+    `;
+    document.head.appendChild(estilo);
+})();
+
