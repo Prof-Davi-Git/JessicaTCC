@@ -8,6 +8,16 @@ const URL_APPS_SCRIPT =
 
 
 async function enviarDenuncia() {
+    // ATUALIZAÇÃO 18/11 - a ação Enviar relato exige a sessão demonstrativa.
+    // O material informativo e os telefones de emergência continuam públicos.
+    if (typeof obterUsuarioDemo !== "function" || !obterUsuarioDemo()) {
+        if (typeof solicitarLoginDemo === "function") {
+            solicitarLoginDemo("denuncias.html");
+        } else {
+            window.location.href = "entrar.html";
+        }
+        return;
+    }
 
     // Pega os valores preenchidos no formulário
 
